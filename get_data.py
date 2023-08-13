@@ -62,7 +62,7 @@ team_df = pd.DataFrame(data['teams'])[['name','link']]
 team_df.rename(columns = {'name':'Current_team'},inplace=True)
 
 roster_df = expand_row(team_df, get_roster, 'link','link', True)
-season_stats_df = expand_row(roster_df, get_player_stats, 'link',0, False)
+season_stats_df = expand_row(roster_df, get_player_stats, 'link',[0,'link'], False)
 
 season_stats_df.to_csv('data/player_season.csv')
 
