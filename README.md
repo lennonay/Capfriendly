@@ -1,4 +1,4 @@
 # NHL Contract Project
 
 ## Sample Work
-![](sample.png)
+![](sample_dashboard.png)
