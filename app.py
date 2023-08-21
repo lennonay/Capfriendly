@@ -13,8 +13,8 @@ df = df[df['Pos']!='D']
 contract_df = pd.read_csv('data/cap_data_1723.csv')
 columns = ['fullName','nhl_season', 'goals_cum','assists_cum','points_cum']
 
-nn_model = pickle.load(open('cluster_f.pkl', 'rb'))
-nhl_logo = Image.open('nhl.png')
+nn_model = pickle.load(open('model/cluster_f.pkl', 'rb'))
+nhl_logo = Image.open('logos/nhl.png')
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
@@ -92,7 +92,7 @@ def set_season_value(available_options):
         Input('player','value')
 )
 def current_team(player):
-    team_abrv = pd.read_csv('team_names.csv')
+    team_abrv = pd.read_csv('data/team_names.csv')
     current_team = df[df['fullName']==player]['Current_team'].max()
 
     abrv = team_abrv[team_abrv['Team'] == current_team]['Abrv_espn'].max()
