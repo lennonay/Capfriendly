@@ -96,7 +96,7 @@ def current_team(player):
     current_team = df[df['fullName']==player]['Current_team'].max()
 
     abrv = team_abrv[team_abrv['Team'] == current_team]['Abrv_espn'].max()
-    link = 'logos/' + abrv + '.png'
+    link = 'logos/' + str(abrv) + '.png'
     string = f' Career Trajectory of {player}'
     return Image.open(link), string
 
