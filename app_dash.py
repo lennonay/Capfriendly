@@ -130,7 +130,7 @@ def contract_table(player_list,season_list):
     contract_list = []
     age_list = []
     for player, season in zip(player_list, season_list):
-        query = contract_df[(contract_df['PLAYER'] == player) & (contract_df['Year'] == int(str(season)[:4]))]
+        query = contract_df[(contract_df['PLAYER'] == player) & (contract_df['Year'] == int(str(season)[:4])+1)]
         contract_list.append(query['CAP HIT'].max())
         age_list.append(query['AGE'].max())
     
