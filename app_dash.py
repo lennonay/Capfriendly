@@ -47,6 +47,10 @@ app.layout = dbc.Container([
                 'padding': 15,
                 'border-radius': 3}),
         dbc.Col([            
+            dbc.Col([html.Img(id = 'current_team', style={'width':'100px'}),
+            html.Div(id = 'title',style={'display': 'inline-block','text-align': 'center','font-size': '24px'})],
+            style={
+                    'text-align': 'center',}),
             dcc.Graph(id = 'target_plot'),
             html.Br(),
             html.Div(id = 'closest_player'),
@@ -82,6 +86,19 @@ def set_season_options(select_player):
     [Input('season', 'options')])
 def set_season_value(available_options):
     return available_options[-1]['value']
+
+@app.callback(
+        [Output('current_team','src'), Output('title','children')],
+        Input('player','value')
+)
+def current_team(player):
+    team_abrv = pd.read_csv('team_names.csv')
+    current_team = df[df['fullName']==player]['Current_team'].max()
+
+    abrv = team_abrv[team_abrv['Team'] == current_team]['Abrv_espn'].max()
+    link = 'logos/' + abrv + '.png'
+    string = f' Career Trajectory of {player}'
+    return Image.open(link), string
 
 @app.callback(
     [Output('closest_player','children'), Output('close_player_list','data'), Output('close_season_list','data')],
@@ -120,7 +137,6 @@ def contract_table(player_list,season_list):
     contract_p_df = pd.DataFrame(zip(player_list, season_list,contract_list, age_list), columns = ['name','season','contract','age'])
     return contract_p_df.to_dict('records'), [{'name': i, 'id': i} for i in contract_p_df.columns]
 
-
 @app.callback(
     Output('target_plot', 'figure'),[Output('table','data'), Output('table','columns')],
     Input('player', 'value'),
@@ -128,7 +144,6 @@ def contract_table(player_list,season_list):
     Input('close_player_list','data')
 )
 def taget_df_plot(player, season, player_list):
-    player_list = list(set(player_list))
     color_list = ['red','orange','green','blue']
 
     season_count = df[(df['fullName'] == player)& (season == df['season'] )]['nhl_season'].max()
@@ -139,8 +154,7 @@ def taget_df_plot(player, season, player_list):
     
     color_discrete_map = {player_list[i]: color_list[i] for i in range(len(player_list))}
 
-    fig = px.line(player_df, x = 'nhl_season', y = 'points_cum', color = 'fullName'
-    ,title = f'Career Trajectory of {player}', template = 'seaborn', markers=True,
+    fig = px.line(player_df, x = 'nhl_season', y = 'points_cum', color = 'fullName', template = 'seaborn', markers=True,
     color_discrete_map = color_discrete_map)
     fig.update_layout(
         xaxis=dict(tickvals=player_df['nhl_season'],ticktext=player_df['nhl_season'])
@@ -148,8 +162,6 @@ def taget_df_plot(player, season, player_list):
     fig.update_traces(patch={"line": {"width": 1}}, opacity = .6)
     fig.update_traces(patch={"line": {"width": 3}}, selector={"legendgroup": player}, opacity = 1)
     return fig,player_df.to_dict('records'), [{'name': i, 'id': i} for i in columns]
-
-
 
 if __name__ == '__main__':
     app.run_server(debug=True)
